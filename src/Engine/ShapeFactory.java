@@ -17,7 +17,6 @@ public class ShapeFactory {
             currentTile = new Tile(rndColor, nextPoint(tiles, currentTile));
             tiles.add(currentTile);
         }
-        System.out.println(tiles.size());
         return tiles;
     }
 
@@ -25,6 +24,7 @@ public class ShapeFactory {
         Color rndColor = randomColor();
         return new Tile(rndColor, new Point(x,y));
     }
+
 
     /**
      *
@@ -43,12 +43,15 @@ public class ShapeFactory {
             newPoint =  new Point(sq.getLocation().x + sign * Tile.getTileSize(), sq.getLocation().y);
         else
            newPoint = new Point(sq.getLocation().x, sq.getLocation().y + sign * Tile.getTileSize());
+        System.out.println("point: " + newPoint);
+
 
         for (int i = 0; i < tiles.size(); i++)
-            if (newPoint == tiles.get(i).getLocation())
+            if (newPoint.equals(tiles.get(i).getLocation()))
                 return nextPoint(tiles, sq); // try again
         return newPoint;
     }
+
 
     /**
      *

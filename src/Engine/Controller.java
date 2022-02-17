@@ -2,33 +2,49 @@ package Engine;
 
 import Graphics.View;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
 
 //TODO doesn't get focused for some fk reason
 public class Controller implements ActionListener, KeyListener{
     Model model;
     View view;
+    Timer timer;
+    public Controller(int x, int y, int delay){
 
-    public Controller(Model m, View v){
-        this.model = m;
-        this.view = v;
+        List<Tile> ms = ShapeFactory.generateShape(x/2 ,  - 2 * Tile.getTileSize());
+        List<Tile> st = new ArrayList<>();
+
+        this.model = new Model(x, y, ms, st);
+        this.view = new View(x, y, ms , st);
+
         view.addKeyListener(this);
         view.setFocusable(true);
-        m.start();
+
+        timer = new Timer(delay, new TimeListener());
+        timer.start();
     }
-    public void newMovingShape(){
-        List<Tile> ts = ShapeFactory.generateShape(250 ,-100);
-        model.setMovingShape(ts);
-        view.setMovingShape(ts);
+    private void updateView(){
+        List<Tile> modelInfo = model.getTileInformation();
+        List<Point> points = new ArrayList<>();
+        List<Color> color = new ArrayList<>();
+        for (Tile t : modelInfo){
+            points.add(t.getLocation());
+            color.add(t.getColor());
+        }
+        view.actOnPositionChange(points, color);
 
     }
+    public class TimeListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.moveDown();
+            updateView();
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+        }
     }
 
     @Override
@@ -40,21 +56,22 @@ public class Controller implements ActionListener, KeyListener{
             model.moveLeft();
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            //model.moveUp();
+            model.rotateClockwise();
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             model.moveDown();
         }
-        view.actOnPositionChange();
+        updateView();
     }
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+    public void keyReleased(KeyEvent e) {}
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {}
 
-    }
+
+
 }
