@@ -1,6 +1,6 @@
 package Engine;
 
-import Graphics.View;
+import Graphics.Frame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,25 +8,29 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO doesn't get focused for some fk reason
 public class Controller implements ActionListener, KeyListener{
     Model model;
-    View view;
+    Frame frame;
     Timer timer;
-    public Controller(int x, int y, int delay){
 
-        List<Tile> ms = ShapeFactory.generateShape(x/2 ,  - 2 * Tile.getTileSize());
+    public Controller(int gameWidth, int gameHeight, int delay){
+        // model init
+        List<Tile> ms = ShapeFactory.generateShape(gameWidth/2 ,  - 2 * Tile.getTileSize());
         List<Tile> st = new ArrayList<>();
+        this.model = new Model(gameWidth, gameHeight, ms, st);
 
-        this.model = new Model(x, y, ms, st);
-        this.view = new View(x, y, ms , st);
+        // frame init
+        this.frame = new Frame(gameWidth, gameHeight);
 
-        view.addKeyListener(this);
-        view.setFocusable(true);
+        // controls init
+        frame.addKeyListener(this);
+        frame.setFocusable(true);
 
+        // timer init
         timer = new Timer(delay, new TimeListener());
         timer.start();
     }
+
     private void updateView(){
         List<Tile> modelInfo = model.getTileInformation();
         List<Point> points = new ArrayList<>();
@@ -35,7 +39,7 @@ public class Controller implements ActionListener, KeyListener{
             points.add(t.getLocation());
             color.add(t.getColor());
         }
-        view.actOnPositionChange(points, color);
+        frame.actOnPositionChange(points, color);
 
     }
     public class TimeListener implements ActionListener{
@@ -46,7 +50,7 @@ public class Controller implements ActionListener, KeyListener{
 
         }
     }
-
+    // *** Controls ***
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
