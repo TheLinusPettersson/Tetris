@@ -13,7 +13,11 @@ public class Controller implements ActionListener, KeyListener{
     Frame frame;
     Timer timer;
 
-    public Controller(int gameWidth, int gameHeight, int delay){
+    public Controller(int gameHeight, int delay){
+        // Game sizing
+        int gameWidth = gameHeight/2;
+        Tile.setTileSize(gameHeight/20);
+
         // model init
         List<Tile> ms = ShapeFactory.generateShape(gameWidth/2 ,  - 2 * Tile.getTileSize());
         List<Tile> st = new ArrayList<>();
@@ -31,7 +35,7 @@ public class Controller implements ActionListener, KeyListener{
         timer.start();
     }
 
-    private void updateView(){
+    private void updateAnimatedView(){
         List<Tile> modelInfo = model.getTileInformation();
         List<Point> points = new ArrayList<>();
         List<Color> color = new ArrayList<>();
@@ -42,12 +46,16 @@ public class Controller implements ActionListener, KeyListener{
         frame.actOnPositionChange(points, color);
 
     }
+    private void updateScoreboard(){
+        frame.updateScore(model.getScore());
+
+    }
     public class TimeListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             model.moveDown();
-            updateView();
-
+            updateAnimatedView();
+            updateScoreboard();
         }
     }
     // *** Controls ***
@@ -65,7 +73,7 @@ public class Controller implements ActionListener, KeyListener{
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             model.moveDown();
         }
-        updateView();
+        updateAnimatedView();
     }
     @Override
     public void keyTyped(KeyEvent e) {}

@@ -7,8 +7,8 @@ import java.awt.*;
 public class Tile {
     private final Point point;
     private final Color color;
-    private static final int TILE_SIZE = 40;
-    private static final int STEP_SIZE = TILE_SIZE / 2;
+    private static int TILE_SIZE = 40;
+    private static int STEP_SIZE = TILE_SIZE / 2;
 
     public Tile(Color c, Point p){
         this.color = c;
@@ -23,6 +23,10 @@ public class Tile {
     public Color getColor(){return color;}
     public void setLocation(int x, int y){ point.setLocation(x, y);}
     public void setLocation(Point p){ point.setLocation(new Point(p));}
+
+    public static void setTileSize(int size){
+        TILE_SIZE = size;
+    }
 
 
     public void paint(Graphics g) {

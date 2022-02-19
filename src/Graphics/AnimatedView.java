@@ -22,7 +22,7 @@ public class AnimatedView extends JPanel {
      */
     public AnimatedView(int windowWidth, int windowHeight) {
         this.setDoubleBuffered(true);
-        this.setPreferredSize(new Dimension(windowWidth, windowHeight));
+        this.setPreferredSize(new Dimension(windowWidth,  windowHeight / (3/2)));
         this.setBackground(Color.darkGray);
         this.setVisible(true);
     }
@@ -42,7 +42,8 @@ public class AnimatedView extends JPanel {
      * paints the tiles
      * @param g graphics
      */
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         for (int i = 0; i< points.size(); i++){
             g.setColor(color.get(i));
             g.fillRect(points.get(i).x, points.get(i).y, Tile.getTileSize(), Tile.getTileSize());

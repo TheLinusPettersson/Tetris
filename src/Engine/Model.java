@@ -2,18 +2,18 @@ package Engine;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 //TODO render only the tiles that dont have another tile directly above it.
 public class Model {
     private final List<Tile> movingShape;
     private final List<Tile> stationaryTiles;
-    private final int x, y;
+    private final int gameWidth, gameHeight;
+    private int score = 0;
 
     Model(int x, int y, List<Tile> movingShape, List<Tile> stationaryShape) {
-        this.x = x;
-        this.y = y;
+        this.gameWidth = x;
+        this.gameHeight = y;
         this.movingShape = movingShape;
         this.stationaryTiles = stationaryShape;
     }
@@ -36,9 +36,9 @@ public class Model {
      */
     public boolean movingShapeOutOfBounds(int xStep, int yStep) {
         for (Tile t : movingShape) {
-            if (t.getLocation().x + xStep < 0 || t.getLocation().x + xStep >= x)
+            if (t.getLocation().x + xStep < 0 || t.getLocation().x + xStep + Tile.getTileSize() > gameWidth)
                 return true;
-            if (t.getLocation().y +  yStep >= y)
+            if (t.getLocation().y +  yStep >= gameHeight)
                 return true;
         }
         return false;
@@ -55,7 +55,7 @@ public class Model {
 
     public void createNewMovingShape() {
         movingShape.clear();
-        movingShape.addAll(ShapeFactory.generateShape(x / 2, -2 * Tile.getTileSize()));
+        movingShape.addAll(ShapeFactory.generateShape(gameWidth / 2, -2 * Tile.getTileSize()));
         fullRow();
     }
 
@@ -70,9 +70,11 @@ public class Model {
     }
     //TODO simplify the shit out of it
     public void fullRow() {
-        int nrOfRows = y / Tile.getTileSize();
-        int nrOfColumns = x / Tile.getTileSize();
+        int nrOfRows = gameHeight / Tile.getTileSize();
+        int nrOfColumns = gameWidth / Tile.getTileSize();
+        int nrORowClears = 0;
         List<Tile> tilesToRemove = new ArrayList<>();
+        
         for (int currentRow = 0; currentRow < nrOfRows; currentRow++) {
             int tilesInRow = 0;
 
@@ -81,6 +83,7 @@ public class Model {
                     tilesInRow++;
 
             if (tilesInRow == nrOfColumns) {
+                nrORowClears++;
                 for (Tile t : stationaryTiles) {
                     if (t.getLocation().y == currentRow * Tile.getTileSize())
                         tilesToRemove.add(t);
@@ -89,8 +92,31 @@ public class Model {
                 }
                 stationaryTiles.removeAll(tilesToRemove);
             }
+
+        }
+        System.out.println(nrORowClears);
+        increaseScore(nrORowClears);
+    }
+    private void increaseScore(int nrOfRows){
+        switch (nrOfRows){
+            case 1:
+                this.score += 100;
+                break;
+            case 2:
+                this.score += 300;
+                break;
+            case 3:
+                this.score += 500;
+                break;
+            case 4:
+                this.score += 800;
+                break;
         }
     }
+    public int getScore(){
+        return score;
+    }
+
 
     // *** MOVEMENT ***
     public void moveRight() {

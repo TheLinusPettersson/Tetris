@@ -43,7 +43,7 @@ public class ShapeFactory {
             newPoint =  new Point(sq.getLocation().x + sign * Tile.getTileSize(), sq.getLocation().y);
         else
            newPoint = new Point(sq.getLocation().x, sq.getLocation().y + sign * Tile.getTileSize());
-        System.out.println("point: " + newPoint);
+
 
 
         for (int i = 0; i < tiles.size(); i++)
